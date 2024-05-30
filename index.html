@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải quyết bài toán SPP với Bellman-Ford</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: blanchedalmond;
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #network {
+            width: 100%;
+            height: 500px;
+            border: 1px solid rgb(0, 0, 0);
+            border-radius: 55px;
+            background-color: white;
+        }
+        #inputForm {
+            font-size: 25px;
+            margin-bottom: 20px;
+        }
+        #nodes, #edges, #startNode {
+            border-radius: 50px;
+            padding: 5px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .support {
+            color: rgb(117, 115, 115);
+            font-size: 20px;
+        }
+        
+        #drawButton, #sppButton {
+                color: rgb(255, 255, 255);
+                font-size: 20px;
+                border-radius: 10px;
+                background-color: rgb(0, 0, 0);
+                transition: all 0.3s ease;
+        }
+
+        #drawButton:hover, #sppButton:hover {
+                color: rgb(255, 255, 255);
+                font-size: 30px;
+                border-radius: 10px;
+                background-color: rgb(115, 114, 114);
+        }
+    </style>
+</head>
+<body>
+    <h1>Giải quyết bài toán SPP với Bellman-Ford</h1>
+    <div id="inputForm">
+        <div class="form-group">
+            <label for="nodes">Nodes: </label>
+            <input type="text" id="nodes" placeholder="VD: 1, 2, 3, 4">
+        </div>
+        <div class="form-group">
+            <label for="edges">Edges: </label>
+            <input type="text" id="edges" placeholder="VD: 1-2-1, 2-3-2"> <i class="support">(Biểu diễn trọng số của 2 điểm 1 và 2: 1-2-1 => Điểm 1 và 2 có trọng số là 1)</i>
+        </div>
+        <div class="form-group">
+            <label for="startNode">Start Node: </label>
+            <input type="text" id="startNode" placeholder="Điểm bắt đầu">
+        </div>
+        <button id = "drawButton" onclick="drawGraph()">Draw Graph</button>
+        <button id = "sppButton" onclick="applyBellmanFord()">Find Shortest Paths</button>
+    </div>
+    <div id="network"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+    <script>
+        let nodes, edges, network;
+
+        function drawGraph() {
+            // Get input values
+            const nodesInput = document.getElementById('nodes').value;
+            const edgesInput = document.getElementById('edges').value;
+
+            // Process nodes
+            const nodesArray = nodesInput.split(',').map(node => node.trim());
+            nodes = new vis.DataSet(
+                nodesArray.map(node => ({ id: node, label: node }))
+            );
+
+            // Process edges
+            const edgesArray = edgesInput.split(',').map(edge => edge.trim());
+            edges = new vis.DataSet(
+                edgesArray.map(edge => {
+                    const [from, to, length] = edge.split('-');
+                    return { from, to, label: length, length: parseInt(length) };
+                })
+            );
+
+            // Create a network
+            const container = document.getElementById('network');
+            const data = { nodes, edges };
+            const options = {
+                physics: {
+                    enabled: true,
+                    barnesHut: {
+                        gravitationalConstant: -8000,
+                        centralGravity: 0.3,
+                        springLength: 95,
+                        springConstant: 0.04,
+                        damping: 0.09,
+                        avoidOverlap: 1
+                    },
+                    maxVelocity: 50,
+                    minVelocity: 0.1,
+                    solver: 'barnesHut',
+                    stabilization: {
+                        enabled: true,
+                        iterations: 1000,
+                        updateInterval: 25,
+                        onlyDynamicEdges: false,
+                        fit: true
+                    }
+                },
+                interaction: {
+                    dragNodes: true,
+                    dragView: true,
+                    zoomView: true
+                }
+            };
+            network = new vis.Network(container, data, options);
+        }
+
+        function applyBellmanFord() {
+            
+        }
+    </script>
+</body>
+</html>
